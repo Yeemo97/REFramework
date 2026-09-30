@@ -1,0 +1,24 @@
+name: Audit untranslated REFramework UI
+
+on:
+  push:
+    branches:
+      - huawu-zh-01424-audit
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Scan untranslated core UI
+        run: python3 dev/audit_untranslated_ui.py
+
+      - name: Upload report
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
+        with:
+          name: untranslated-core-ui
+          path: untranslated_core_ui.tsv
+          if-no-files-found: error
