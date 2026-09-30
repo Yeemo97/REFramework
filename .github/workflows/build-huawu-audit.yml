@@ -1,0 +1,52 @@
+name: Build Huawu REFramework 01424 Audit
+
+on:
+  push:
+    branches:
+      - huawu-zh-01424-audit
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          submodules: recursive
+
+      - name: Apply Huawu Chinese UI layer
+        run: python dev/apply_huawu_i18n.py
+
+      - name: Audit direct struct field access
+        run: |
+          pip install libclang
+          python dev/audit_direct_access_clang.py
+
+      - name: Configure CMake
+        env:
+          CL: /utf-8
+        run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -G "Visual Studio 18 2026" -A x64 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DDEVELOPER_MODE=ON "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+
+      - name: Build
+        env:
+          CL: /utf-8
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target REFramework
+
+      - name: Package
+        shell: powershell
+        run: |
+          Set-Content -Path "${{github.workspace}}/reframework_revision.txt" -Value "${{github.sha}}"
+          7z a "${{github.workspace}}/REFramework-Huawu-01424-Audit.zip" "${{github.workspace}}/reframework_revision.txt"
+          7z a "${{github.workspace}}/REFramework-Huawu-01424-Audit.zip" "${{github.workspace}}/build/bin/REFramework/dinput8.dll"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
+        with:
+          name: REFramework-Huawu-01424-Audit
+          path: ${{github.workspace}}/REFramework-Huawu-01424-Audit.zip
+          if-no-files-found: error
