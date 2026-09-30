@@ -8,6 +8,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <fstream>
+#include <string>
+#include <unordered_set>
 
 namespace huawu_i18n {
 
@@ -100,6 +103,81 @@ inline const char* lookup(uint32_t hash) noexcept {
     return (it != last && it->hash == hash) ? it->text : 0;
 }
 
+inline uint32_t audit_normalized_hash(const char* begin, const char* end) noexcept {
+    uint32_t h = 0x811C9DC5u;
+    bool in_digits = false;
+    for (const unsigned char* p = reinterpret_cast<const unsigned char*>(begin);
+         p != reinterpret_cast<const unsigned char*>(end); ++p) {
+        unsigned char c = *p;
+        if (c >= '0' && c <= '9') {
+            if (in_digits) {
+                continue;
+            }
+            c = '#';
+            in_digits = true;
+        } else {
+            in_digits = false;
+        }
+        h ^= static_cast<uint32_t>(c);
+        h *= 0x01000193u;
+    }
+    return h;
+}
+
+inline void audit_untranslated(const char* begin, const char* end, uint32_t exact_hash) noexcept {
+    if (begin == 0 || end == 0 || begin >= end) {
+        return;
+    }
+
+    const std::size_t len = static_cast<std::size_t>(end - begin);
+    if (len < 2 || len > 512) {
+        return;
+    }
+
+    bool has_ascii_letters = false;
+    for (const char* p = begin; p != end; ++p) {
+        if ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z')) {
+            has_ascii_letters = true;
+            break;
+        }
+    }
+    if (!has_ascii_letters) {
+        return;
+    }
+
+    if (len >= 2 && begin[0] == '#' && begin[1] == '#') {
+        return;
+    }
+
+    static std::unordered_set<uint32_t> seen;
+    const uint32_t normalized = audit_normalized_hash(begin, end);
+    if (!seen.insert(normalized).second) {
+        return;
+    }
+
+    try {
+        std::ofstream out{"reframework_untranslated_ui.tsv", std::ios::app | std::ios::binary};
+        if (!out) {
+            return;
+        }
+
+        char hashbuf[16]{};
+        std::snprintf(hashbuf, sizeof(hashbuf), "0x%08X", exact_hash);
+        out << hashbuf << '\t';
+
+        for (const char* p = begin; p != end; ++p) {
+            switch (*p) {
+            case '\n': out << "\\n"; break;
+            case '\r': out << "\\r"; break;
+            case '\t': out << "\\t"; break;
+            default: out << *p; break;
+            }
+        }
+        out << '\n';
+    } catch (...) {
+    }
+}
+
 inline TextView translate(const char* begin, const char* end) noexcept {
     if (begin == 0) {
         return {0, 0};
@@ -111,10 +189,13 @@ inline TextView translate(const char* begin, const char* end) noexcept {
         return {begin, 0};
     }
 
-    const char* translated = lookup(fnv1a32(begin, end));
+    const uint32_t exact_hash = fnv1a32(begin, end);
+    const char* translated = lookup(exact_hash);
     if (translated != 0) {
         return {translated, std::strlen(translated)};
     }
+
+    audit_untranslated(begin, end, exact_hash);
     return {begin, static_cast<std::size_t>(end - begin)};
 }
 
