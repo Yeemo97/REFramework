@@ -9,10 +9,11 @@ def add_include(path: Path):
     text = path.read_text(encoding="utf-8")
     if HEADER_INCLUDE in text:
         return
-    marker = '#include "imgui_internal.h"\n'
+    marker = '#include "imgui.h"\n#ifndef IMGUI_DISABLE\n#include "imgui_internal.h"\n'
     if text.count(marker) != 1:
         raise RuntimeError(f"{path}: include anchor not found uniquely")
-    path.write_text(text.replace(marker, marker + HEADER_INCLUDE, 1), encoding="utf-8", newline="\n")
+    replacement = '#include "imgui.h"\n#ifndef IMGUI_DISABLE\n#include "imgui_internal.h"\n' + HEADER_INCLUDE
+    path.write_text(text.replace(marker, replacement, 1), encoding="utf-8", newline="\n")
 
 def replace_once(path: Path, old: str, new: str):
     text = path.read_text(encoding="utf-8")
