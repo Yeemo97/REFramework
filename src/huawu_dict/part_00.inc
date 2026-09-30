@@ -325,7 +325,7 @@
     {0x1248498Fu, "反击蓄力等级"},
     {0x12529EA5u, "【衣装自动隐藏】Auto Hide Mantle"},
     {0x125778D6u, " 任务 绑定快捷键"},
-    {0x1261B992u, "高 (\\" .. VolumetricFogTextureSizes[1] .. \\")"},
+    {0x1261B992u, "高 (\" .. VolumetricFogTextureSizes[1] .. \")"},
     {0x12628D70u, "清除任务"},
     {0x12781F75u, "护辟兽的牙"},
     {0x128A2D2Du, "衣装设置"},

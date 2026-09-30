@@ -96,7 +96,7 @@
     {0x27F03BDBu, "指示随从"},
     {0x280981D7u, "时间比例（持续）热键"},
     {0x280A1F4Bu, "白炎翅笛Ⅰ "},
-    {0x28166BDBu, "最低 (\\" .. VolumetricFogTextureSizes[2] .. \\", 隐藏)"},
+    {0x28166BDBu, "最低 (\" .. VolumetricFogTextureSizes[2] .. \", 隐藏)"},
     {0x281BE2B0u, "酥加猫服饰α"},
     {0x2820DBD2u, "A级技能"},
     {0x28235C7Du, "各星级怪物在"},

@@ -240,7 +240,7 @@
     {0xB0F47B5Bu, "怪鸟之怒Ⅱ "},
     {0xB0F50587u, "使用4个盟友栏"},
     {0xB107A380u, "速射强化"},
-    {0xB116477Du, "较低 (\\" .. VolumetricFogTextureSizes[3] .. \\", 隐藏)"},
+    {0xB116477Du, "较低 (\" .. VolumetricFogTextureSizes[3] .. \", 隐藏)"},
     {0xB121CFFDu, "锁刃龙α "},
     {0xB12234AAu, "生锈的武器碎片"},
     {0xB122EE98u, "无限投射器弹药（爆裂弹、荆棘弹等）"},
