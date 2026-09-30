@@ -52,9 +52,48 @@ inline std::size_t dict_size() noexcept {
     return sizeof(dict) / sizeof(dict[0]);
 }
 
+static const Entry extras_01424[] = {
+    {0x0F746923u, "文件缺失"},
+    {0x1875051Fu, "未知原因"},
+    {0x393B7A01u, "启用异常文件检测器"},
+    {0x473C35F7u, "应加密"},
+    {0x5F529EF3u, "已加载的自定义 PAK："},
+    {0x70FF8706u, "文件无效"},
+    {0x775E835Fu, "允许加载 %s 目录中的 PAK 文件。文件名可自定义，但扩展名必须为 .pak（区分大小写）。"},
+    {0x8255ACFDu, "重启游戏后生效。"},
+    {0x866F3813u, "错误：%s"},
+    {0x8AE150F7u, "显示最近记录##ShowRecentFaultyFiles"},
+    {0x8F481D03u, "文件缺失"},
+    {0xA0AAD9B4u, "检测到异常文件！"},
+    {0xA274594Du, "检测到的异常文件总数：%zu"},
+    {0xA75E65EFu, "……另有 %zu 个"},
+    {0xA8C107B8u, "PAK目录加载"},
+    {0xB5A63652u, "最近异常文件最大显示数量"},
+    {0xB86A2F23u, "PAK 应为加密文件"},
+    {0xC82ABC39u, "完整列表和详情请查看 reframework_faulty_files.txt。请使用外部工具确认是哪个 MOD/补丁导致该问题。"},
+    {0xE52FBA7Au, "异常文件检测器"},
+    {0xE63BDC63u, "未检测到异常文件！"},
+    {0xEE58D1E6u, "文件无效"},
+};
+
+inline std::size_t extras_01424_size() noexcept {
+    return sizeof(extras_01424) / sizeof(extras_01424[0]);
+}
+
 inline const char* lookup(uint32_t hash) noexcept {
-    const Entry* first = dict;
-    const Entry* last = dict + dict_size();
+    {
+        const Entry* first = dict;
+        const Entry* last = dict + dict_size();
+        const Entry* it = std::lower_bound(
+            first, last, hash,
+            [](const Entry& e, uint32_t v) { return e.hash < v; });
+        if (it != last && it->hash == hash) {
+            return it->text;
+        }
+    }
+
+    const Entry* first = extras_01424;
+    const Entry* last = extras_01424 + extras_01424_size();
     const Entry* it = std::lower_bound(
         first, last, hash,
         [](const Entry& e, uint32_t v) { return e.hash < v; });

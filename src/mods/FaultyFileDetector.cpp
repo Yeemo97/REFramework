@@ -29,13 +29,13 @@ struct REResource_Via_Raw {
 const char *faulty_reason_to_string(FaultyFileDetector::FaultyReason reason) {
     switch (reason) {
         case FaultyFileDetector::FaultyReason::Unknown:
-            return "Unknown reason";
+            return "未知原因";
         case FaultyFileDetector::FaultyReason::MissingFile:
-            return "Missing file";
+            return "文件缺失";
         case FaultyFileDetector::FaultyReason::Invalid:
-            return "Invalid file";
+            return "文件无效";
         case FaultyFileDetector::FaultyReason::ShouldBeEncrypted:
-            return "PAK should be encrypted";
+            return "PAK 应为加密文件";
         default:
             return "Unknown reason";
     }
