@@ -31,7 +31,7 @@
     {0x442CE3F3u, "耐裂珠【1】"},
     {0x445803D4u, "重置已发布任务的列表"},
     {0x445EE04Eu, "白兔兽"},
-    {0x448DD6BBu, "低 (" .. VolumetricFogTextureSizes[0] .. ")"},
+    {0x448DD6BBu, "低 (\\" .. VolumetricFogTextureSizes[0] .. \\")"},
     {0x44952C7Eu, "桃毛突击Ⅱ "},
     {0x449CEE2Bu, "护辟荒枪Ⅰ "},
     {0x449EA51Fu, "硬件调度中:%s"},
